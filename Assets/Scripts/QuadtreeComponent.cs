@@ -1,20 +1,17 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class QuadtreeComponent : MonoBehaviour {
-    [SerializeField] private float size;
-    [SerializeField] private int depth;
+    public float size;
+    public int depth;
 
-    [SerializeField] private Transform[] points;
+    public Quadtree<bool> Quadtree { get; private set; }
+
+    private void Awake() {
+        Quadtree = new Quadtree<bool>(transform.position, size, depth);
+    }
 
     private void OnDrawGizmos() {
-        var quadtree = new Quadtree<bool>(transform.position, size, depth);
-        foreach(var point in points) {
-            quadtree.Insert(point.position, true);
-        }
-
-        DrawNode(quadtree.GetRoot());
+        if (Quadtree != null) DrawNode(Quadtree.GetRoot());
     }
 
     private Color minColor = new Color(1, 1, 1, 1);

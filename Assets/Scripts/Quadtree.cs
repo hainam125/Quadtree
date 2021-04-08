@@ -8,7 +8,7 @@ public enum QuadtreeIndex {
     BottomRight = 3,    //11
 }
 
-public class Quadtree<TType> : MonoBehaviour {
+public class Quadtree<TType> {
     private QuadtreeNode<TType> node;
     private int depth;
 
@@ -18,10 +18,14 @@ public class Quadtree<TType> : MonoBehaviour {
     }
 
     public void Insert(Vector2 position, TType value) {
-        node.Subdivide(position, value, depth);
+        node.Subdivide(position, value, depth - 1);
     }
 
     public QuadtreeNode<TType> GetRoot() => node;
+
+    public IEnumerable<QuadtreeNode<TType>> GetLeafNodes() {
+        return node.GetLeafNodes();
+    }
 
     public static int GetIndexOfPosition(Vector2 lookupPosition, Vector2 nodePosition) {
         int index = 0;
@@ -37,9 +41,10 @@ public class QuadtreeNode<TType> {
     private QuadtreeNode<TType>[] subnodes;
     private TType value;
 
-    public QuadtreeNode(Vector2 position, float size) {
+    public QuadtreeNode(Vector2 position, float size, TType value = default(TType)) {
         this.position = position;
         this.size = size;
+        this.value = value;
     }
 
     public IEnumerable<QuadtreeNode<TType>> Nodes => subnodes;
@@ -48,7 +53,22 @@ public class QuadtreeNode<TType> {
 
     public float Size => size;
 
+    public TType Value => value;
+
     public bool IsLeaf() => subnodes == null;
+
+    public IEnumerable<QuadtreeNode<TType>> GetLeafNodes() {
+        if (IsLeaf()) {
+            yield return this;
+        }
+        else {
+            foreach (var node in Nodes) {
+                foreach(var leaf in node.GetLeafNodes()) {
+                    yield return leaf;
+                }
+            }
+        }
+    }
 
     public void Subdivide(Vector2 targetPosition, TType value, int depth = 0) {
         var subIndex = Quadtree<TType>.GetIndexOfPosition(targetPosition, position);
