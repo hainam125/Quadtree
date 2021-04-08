@@ -14,10 +14,12 @@ public class QuadMeshCreator : MonoBehaviour
 
     private void GenerateMesh() {
         foreach (var leaf in quadtree.Quadtree.GetLeafNodes()) {
-            var go = GameObject.CreatePrimitive(PrimitiveType.Quad);
-            go.transform.parent = quadtree.transform;
-            go.transform.localPosition = leaf.Position;
-            go.transform.localScale = leaf.Size * Vector3.one;
+            if (leaf.Data) {
+                var go = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                go.transform.parent = quadtree.transform;
+                go.transform.localPosition = leaf.Position;
+                go.transform.localScale = leaf.Size * Vector3.one;
+            }
         }
     }
 }

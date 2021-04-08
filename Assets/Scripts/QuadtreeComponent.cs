@@ -18,7 +18,7 @@ public class QuadtreeComponent : MonoBehaviour {
     private Color maxColor = new Color(0, 0.5f, 1, 0.25f);
 
     private void DrawNode(QuadtreeNode<bool> node, int nodeDepth = 0) {
-        if (!node.IsLeaf()) {
+        if (!node.IsLeaf() && node.Nodes != null) {
             foreach (var subNode in node.Nodes) {
                 if (subNode != null) DrawNode(subNode, nodeDepth + 1);
             }

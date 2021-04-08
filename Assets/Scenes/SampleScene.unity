@@ -236,7 +236,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   size: 8
-  depth: 5
+  depth: 6
 --- !u!4 &1907557818
 Transform:
   m_ObjectHideFlags: 0

@@ -13,12 +13,13 @@ public class Quadtree<TType> {
     private int depth;
 
     public Quadtree(Vector2 position, float size, int depth) {
-        this.node = new QuadtreeNode<TType>(position, size);
+        this.node = new QuadtreeNode<TType>(position, size, depth);
         this.depth = depth;
     }
 
     public void Insert(Vector2 position, TType value) {
-        node.Subdivide(position, value, depth - 1);
+        var leafNode = node.Subdivide(position, value, depth);
+        leafNode.Data = value;
     }
 
     public QuadtreeNode<TType> GetRoot() => node;
@@ -39,12 +40,14 @@ public class QuadtreeNode<TType> {
     private Vector2 position;
     private float size;
     private QuadtreeNode<TType>[] subnodes;
-    private TType value;
+    private TType data;
+    private int depth;
 
-    public QuadtreeNode(Vector2 position, float size, TType value = default(TType)) {
+    public QuadtreeNode(Vector2 position, float size, int depth, TType data = default(TType)) {
         this.position = position;
         this.size = size;
-        this.value = value;
+        this.data = data;
+        this.depth = depth;
     }
 
     public IEnumerable<QuadtreeNode<TType>> Nodes => subnodes;
@@ -53,24 +56,30 @@ public class QuadtreeNode<TType> {
 
     public float Size => size;
 
-    public TType Value => value;
+    public TType Data {
+        get => data;
+        internal set => data = value;
+    }
 
-    public bool IsLeaf() => subnodes == null;
+    public bool IsLeaf() => depth == 0;
 
     public IEnumerable<QuadtreeNode<TType>> GetLeafNodes() {
         if (IsLeaf()) {
             yield return this;
         }
-        else {
+        else if (Nodes != null) {
             foreach (var node in Nodes) {
-                foreach(var leaf in node.GetLeafNodes()) {
+                foreach (var leaf in node.GetLeafNodes()) {
                     yield return leaf;
                 }
             }
         }
     }
 
-    public void Subdivide(Vector2 targetPosition, TType value, int depth = 0) {
+    public QuadtreeNode<TType> Subdivide(Vector2 targetPosition, TType value, int depth = 0) {
+        if (depth == 0) {
+            return this;
+        }
         var subIndex = Quadtree<TType>.GetIndexOfPosition(targetPosition, position);
         if (subnodes == null) {
             subnodes = new QuadtreeNode<TType>[4];
@@ -88,11 +97,9 @@ public class QuadtreeNode<TType> {
                 else {
                     newPos.x -= size * 0.25f;
                 }
-                subnodes[i] = new QuadtreeNode<TType>(newPos, size * 0.5f);
+                subnodes[i] = new QuadtreeNode<TType>(newPos, size * 0.5f, depth - 1);
             }
         }
-        if (depth > 0) {
-            subnodes[subIndex].Subdivide(targetPosition, value, depth - 1);
-        }
+        return subnodes[subIndex].Subdivide(targetPosition, value, depth - 1);
     }
 }
