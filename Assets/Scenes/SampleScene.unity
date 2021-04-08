@@ -236,7 +236,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   size: 8
-  depth: 6
+  depth: 8
 --- !u!4 &1907557818
 Transform:
   m_ObjectHideFlags: 0
@@ -280,3 +280,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   generate: 0
   quadtree: {fileID: 1907557817}
+  voxelMaterial: {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
