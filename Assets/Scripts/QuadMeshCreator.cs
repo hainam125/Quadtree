@@ -7,14 +7,26 @@ public class QuadMeshCreator : MonoBehaviour
     [SerializeField] private QuadtreeComponent quadtree;
     [SerializeField] private Material voxelMaterial;
 
+    private GameObject prevMesh;
+    private bool initialized;
+
     private void Update() {
+        if (quadtree.Quadtree != null && !initialized) {
+            initialized = false;
+            quadtree.Quadtree.QuadtreeUpdated += (obj, args) => generate = true;
+        }
+
         if (generate) {
-            GenerateMesh();
             generate = false;
+            var mesh = GenerateMesh();
+            if (prevMesh != null) {
+                Destroy(prevMesh);
+            }
+            prevMesh = mesh;
         }
     }
 
-    private void GenerateMesh() {
+    private GameObject GenerateMesh() {
         GameObject chunk = new GameObject("Voxel Chunk");
         chunk.transform.parent = transform;
         chunk.transform.localPosition = Vector3.zero;
@@ -26,6 +38,7 @@ public class QuadMeshCreator : MonoBehaviour
         var normals = new List<Vector3>();
 
         foreach (var leaf in quadtree.Quadtree.GetLeafNodes()) {
+            if (!leaf.Data) continue;
             var upperLeft = new Vector3(leaf.Position.x - leaf.Size * 0.5f, leaf.Position.y + leaf.Size * 0.5f, 0);
             var initialIndex = vertices.Count;
 
@@ -64,5 +77,6 @@ public class QuadMeshCreator : MonoBehaviour
         meshRenderer.material = voxelMaterial;
 
         meshFilter.mesh = mesh;
+        return chunk;
     }
 }

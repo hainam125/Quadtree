@@ -11,8 +11,8 @@ public class ImageToVoxelGenerator : MonoBehaviour {
 
     private void Generate() {
         var cells = (int)Mathf.Pow(2, quadtree.depth);
-        for(int x = 0; x < cells; x++) {
-            for(int y = 0; y < cells; y++) {
+        for(int x = 0; x <= cells; x++) {
+            for(int y = 0; y <= cells; y++) {
                 Vector2 position = quadtree.transform.position;
                 position.x += ((x - cells / 2) / (float)cells) * quadtree.size;
                 position.y += ((y - cells / 2) / (float)cells) * quadtree.size;

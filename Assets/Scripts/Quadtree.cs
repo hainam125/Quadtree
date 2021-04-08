@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public enum QuadtreeIndex {
@@ -12,6 +13,8 @@ public class Quadtree<TType> {
     private QuadtreeNode<TType> node;
     private int depth;
 
+    public event EventHandler QuadtreeUpdated;
+
     public Quadtree(Vector2 position, float size, int depth) {
         this.node = new QuadtreeNode<TType>(position, size, depth);
         this.depth = depth;
@@ -20,12 +23,17 @@ public class Quadtree<TType> {
     public void Insert(Vector2 position, TType value) {
         var leafNode = node.Subdivide(position, value, depth);
         leafNode.Data = value;
+        NotifyQuadtreeUpdate();
     }
 
     public QuadtreeNode<TType> GetRoot() => node;
 
     public IEnumerable<QuadtreeNode<TType>> GetLeafNodes() {
         return node.GetLeafNodes();
+    }
+
+    private void NotifyQuadtreeUpdate() {
+        QuadtreeUpdated?.Invoke(this, new EventArgs());
     }
 
     public static int GetIndexOfPosition(Vector2 lookupPosition, Vector2 nodePosition) {

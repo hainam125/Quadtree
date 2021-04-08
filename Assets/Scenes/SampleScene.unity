@@ -216,6 +216,7 @@ GameObject:
   - component: {fileID: 1907557820}
   - component: {fileID: 1907557819}
   - component: {fileID: 1907557817}
+  - component: {fileID: 1907557821}
   m_Layer: 0
   m_Name: QuadtreeComponent
   m_TagString: Untagged
@@ -236,7 +237,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   size: 8
-  depth: 8
+  depth: 6
 --- !u!4 &1907557818
 Transform:
   m_ObjectHideFlags: 0
@@ -281,3 +282,16 @@ MonoBehaviour:
   generate: 0
   quadtree: {fileID: 1907557817}
   voxelMaterial: {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+--- !u!114 &1907557821
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1907557816}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a40f94aaf3194675a6b090af81ee72f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  quadtree: {fileID: 1907557817}
