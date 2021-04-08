@@ -13,15 +13,19 @@ public class Quadtree<TType> : MonoBehaviour {
     private int depth;
 
     public Quadtree(Vector2 position, float size, int depth) {
-        node = new QuadtreeNode<TType>(position, size);
-        node.Subdivide(depth);
+        this.node = new QuadtreeNode<TType>(position, size);
+        this.depth = depth;
+    }
+
+    public void Insert(Vector2 position, TType value) {
+        node.Subdivide(position, value, depth);
     }
 
     public QuadtreeNode<TType> GetRoot() => node;
 
-    private int GetIndexOfPosition(Vector2 lookupPosition, Vector2 nodePosition) {
+    public static int GetIndexOfPosition(Vector2 lookupPosition, Vector2 nodePosition) {
         int index = 0;
-        index |= lookupPosition.y > nodePosition.y ? 2 : 0;
+        index |= lookupPosition.y < nodePosition.y ? 2 : 0;
         index |= lookupPosition.x > nodePosition.x ? 1 : 0;
         return index;
     }
@@ -31,7 +35,7 @@ public class QuadtreeNode<TType> {
     private Vector2 position;
     private float size;
     private QuadtreeNode<TType>[] subnodes;
-    private IList<TType> value;
+    private TType value;
 
     public QuadtreeNode(Vector2 position, float size) {
         this.position = position;
@@ -46,26 +50,29 @@ public class QuadtreeNode<TType> {
 
     public bool IsLeaf() => subnodes == null;
 
-    public void Subdivide(int depth = 0) {
-        subnodes = new QuadtreeNode<TType>[4];
-        for (int i = 0; i < subnodes.Length; i++) {
-            Vector2 newPos = position;
-            if ((i & 2) == 2) {
-                newPos.y -= size * 0.25f;
+    public void Subdivide(Vector2 targetPosition, TType value, int depth = 0) {
+        var subIndex = Quadtree<TType>.GetIndexOfPosition(targetPosition, position);
+        if (subnodes == null) {
+            subnodes = new QuadtreeNode<TType>[4];
+            for (int i = 0; i < subnodes.Length; i++) {
+                Vector2 newPos = position;
+                if ((i & 2) == 2) {
+                    newPos.y -= size * 0.25f;
+                }
+                else {
+                    newPos.y += size * 0.25f;
+                }
+                if ((i & 1) == 1) {
+                    newPos.x += size * 0.25f;
+                }
+                else {
+                    newPos.x -= size * 0.25f;
+                }
+                subnodes[i] = new QuadtreeNode<TType>(newPos, size * 0.5f);
             }
-            else {
-                newPos.y += size * 0.25f;
-            }
-            if ((i & 1) == 1) {
-                newPos.x += size * 0.25f;
-            }
-            else {
-                newPos.x -= size * 0.25f;
-            }
-            subnodes[i] = new QuadtreeNode<TType>(newPos, size * 0.5f);
-            if (depth > 0) {
-                subnodes[i].Subdivide(depth - 1);
-            }
+        }
+        if (depth > 0) {
+            subnodes[subIndex].Subdivide(targetPosition, value, depth - 1);
         }
     }
 }
