@@ -26,6 +26,13 @@ public class Quadtree<TType> {
         NotifyQuadtreeUpdate();
     }
 
+    public void InsertCircle(Vector2 position, float radius, TType value) {
+        var list = new List<QuadtreeNode<TType>>();
+        node.CircleSubdivide(list, position, radius, value, depth);
+        foreach (var leafNode in list) leafNode.Data = value;
+        NotifyQuadtreeUpdate();
+    }
+
     public QuadtreeNode<TType> GetRoot() => node;
 
     public IEnumerable<QuadtreeNode<TType>> GetLeafNodes() {
@@ -60,7 +67,7 @@ public class QuadtreeNode<TType> {
 
     public IEnumerable<QuadtreeNode<TType>> Nodes => subnodes;
 
-    public Vector3 Position => position;
+    public Vector2 Position => position;
 
     public float Size => size;
 
@@ -109,5 +116,44 @@ public class QuadtreeNode<TType> {
             }
         }
         return subnodes[subIndex].Subdivide(targetPosition, value, depth - 1);
+    }
+
+    public void CircleSubdivide(IList<QuadtreeNode<TType>> selectedNodes, Vector2 targetPosition, float radius, TType value, int depth = 0) {
+        if (depth == 0) {
+            selectedNodes.Add(this);
+            return;
+        }
+        var subIndex = Quadtree<TType>.GetIndexOfPosition(targetPosition, position);
+        if (subnodes == null) {
+            subnodes = new QuadtreeNode<TType>[4];
+            for (int i = 0; i < subnodes.Length; i++) {
+                Vector2 newPos = position;
+                if ((i & 2) == 2) {
+                    newPos.y -= size * 0.25f;
+                }
+                else {
+                    newPos.y += size * 0.25f;
+                }
+                if ((i & 1) == 1) {
+                    newPos.x += size * 0.25f;
+                }
+                else {
+                    newPos.x -= size * 0.25f;
+                }
+                subnodes[i] = new QuadtreeNode<TType>(newPos, size * 0.5f, depth - 1);
+            }
+        }
+        for (int i = 0; i < subnodes.Length; i++) {
+            if (subnodes[i].ContainedInCircle(targetPosition, radius)) {
+                subnodes[i].CircleSubdivide(selectedNodes, targetPosition, radius, value, depth - 1);
+            }
+        }
+    }
+
+    private bool ContainedInCircle(Vector2 position, float radius) {
+        Vector2 difference = Position - position;
+        difference.x = Mathf.Max(0, Mathf.Abs(difference.x) - size / 2);
+        difference.y = Mathf.Max(0, Mathf.Abs(difference.y) - size / 2);
+        return difference.magnitude < radius;
     }
 }

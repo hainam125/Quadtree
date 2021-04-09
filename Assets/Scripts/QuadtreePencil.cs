@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 public class QuadtreePencil : MonoBehaviour {
-    [SerializeField] QuadtreeComponent quadtree;
+    [SerializeField] private QuadtreeComponent quadtree;
 
     private void Update() {
         var ray =  Camera.main.ScreenPointToRay(Input.mousePosition);
