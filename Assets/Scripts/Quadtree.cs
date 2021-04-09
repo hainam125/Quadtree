@@ -29,7 +29,6 @@ public class Quadtree<TType> {
     public void InsertCircle(Vector2 position, float radius, TType value) {
         var list = new List<QuadtreeNode<TType>>();
         node.CircleSubdivide(list, position, radius, value, depth);
-        foreach (var leafNode in list) leafNode.Data = value;
         NotifyQuadtreeUpdate();
     }
 
@@ -76,7 +75,7 @@ public class QuadtreeNode<TType> {
         internal set => data = value;
     }
 
-    public bool IsLeaf() => depth == 0;
+    public bool IsLeaf() => Nodes == null;
 
     public IEnumerable<QuadtreeNode<TType>> GetLeafNodes() {
         if (IsLeaf()) {
@@ -120,10 +119,10 @@ public class QuadtreeNode<TType> {
 
     public void CircleSubdivide(IList<QuadtreeNode<TType>> selectedNodes, Vector2 targetPosition, float radius, TType value, int depth = 0) {
         if (depth == 0) {
+            data = value;
             selectedNodes.Add(this);
             return;
         }
-        var subIndex = Quadtree<TType>.GetIndexOfPosition(targetPosition, position);
         if (subnodes == null) {
             subnodes = new QuadtreeNode<TType>[4];
             for (int i = 0; i < subnodes.Length; i++) {
@@ -140,13 +139,24 @@ public class QuadtreeNode<TType> {
                 else {
                     newPos.x -= size * 0.25f;
                 }
-                subnodes[i] = new QuadtreeNode<TType>(newPos, size * 0.5f, depth - 1);
+                subnodes[i] = new QuadtreeNode<TType>(newPos, size * 0.5f, depth - 1, Data);
             }
         }
         for (int i = 0; i < subnodes.Length; i++) {
             if (subnodes[i].ContainedInCircle(targetPosition, radius)) {
                 subnodes[i].CircleSubdivide(selectedNodes, targetPosition, radius, value, depth - 1);
             }
+        }
+
+        var shouldReduce = true;
+        var initialValue = subnodes[0].Data;
+        for(int i = 0; i < subnodes.Length; i++) {
+            shouldReduce &= initialValue.Equals(subnodes[i].Data);
+            shouldReduce &= subnodes[i].IsLeaf();
+        }
+        if (shouldReduce) {
+            Data = initialValue;
+            subnodes = null;
         }
     }
 
