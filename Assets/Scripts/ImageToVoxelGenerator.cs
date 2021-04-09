@@ -19,7 +19,7 @@ public class ImageToVoxelGenerator : MonoBehaviour {
 
                 var pixel = image.GetPixelBilinear(x / (float)cells, y / (float)cells);
                 if(pixel.a > threshold) {
-                    quadtree.Quadtree.Insert(position, true);
+                    quadtree.Quadtree.Insert(position, 1);
                 }
             }
         }

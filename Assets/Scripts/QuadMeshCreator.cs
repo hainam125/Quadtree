@@ -3,6 +3,13 @@ using UnityEngine;
 
 public class QuadMeshCreator : MonoBehaviour
 {
+    private readonly Color[] voxelColorCodes = new Color[] {
+        Color.clear,
+        Color.red,
+        Color.green,
+        Color.blue,
+    };
+
     [SerializeField] private bool generate;
     [SerializeField] private QuadtreeComponent quadtree;
     [SerializeField] private Material voxelMaterial;
@@ -36,9 +43,10 @@ public class QuadMeshCreator : MonoBehaviour
         var triangles = new List<int>();
         var uvs = new List<Vector2>();
         var normals = new List<Vector3>();
+        var colors = new List<Color>();
 
         foreach (var leaf in quadtree.Quadtree.GetLeafNodes()) {
-            if (!leaf.Data) continue;
+            if (leaf.Data == 0) continue;
             var upperLeft = new Vector3(leaf.Position.x - leaf.Size * 0.5f, leaf.Position.y + leaf.Size * 0.5f, 0);
             var initialIndex = vertices.Count;
 
@@ -64,12 +72,18 @@ public class QuadMeshCreator : MonoBehaviour
             triangles.Add(initialIndex + 3);
             triangles.Add(initialIndex + 2);
             triangles.Add(initialIndex + 1);
+
+            colors.Add(voxelColorCodes[leaf.Data]);
+            colors.Add(voxelColorCodes[leaf.Data]);
+            colors.Add(voxelColorCodes[leaf.Data]);
+            colors.Add(voxelColorCodes[leaf.Data]);
         }
 
         mesh.SetVertices(vertices);
         mesh.SetTriangles(triangles, 0);
         mesh.SetUVs(0, uvs);
         mesh.SetNormals(normals);
+        mesh.SetColors(colors);
 
 
         var meshFilter = chunk.AddComponent<MeshFilter>();

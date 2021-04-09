@@ -4,10 +4,10 @@ public class QuadtreeComponent : MonoBehaviour {
     public float size;
     public int depth;
 
-    public Quadtree<bool> Quadtree { get; private set; }
+    public Quadtree<int> Quadtree { get; private set; }
 
     private void Awake() {
-        Quadtree = new Quadtree<bool>(transform.position, size, depth);
+        Quadtree = new Quadtree<int>(transform.position, size, depth);
     }
 
     private void OnDrawGizmos() {
@@ -17,7 +17,7 @@ public class QuadtreeComponent : MonoBehaviour {
     private Color minColor = new Color(1, 1, 1, 1);
     private Color maxColor = new Color(0, 0.5f, 1, 0.25f);
 
-    private void DrawNode(QuadtreeNode<bool> node, int nodeDepth = 0) {
+    private void DrawNode(QuadtreeNode<int> node, int nodeDepth = 0) {
         if (!node.IsLeaf() && node.Nodes != null) {
             foreach (var subNode in node.Nodes) {
                 if (subNode != null) DrawNode(subNode, nodeDepth + 1);
