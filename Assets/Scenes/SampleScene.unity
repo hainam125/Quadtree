@@ -280,7 +280,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f891e5a18044c4e51a1157ed8f5f54e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  generate: 0
+  generate: 1
   quadtree: {fileID: 1907557817}
   voxelMaterial: {fileID: 2100000, guid: de6b8474d9c774a28819c07734171aa7, type: 2}
 --- !u!114 &1907557821
@@ -311,7 +311,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   quadtree: {fileID: 1907557817}
   radius: 0.5
-  value: 1
+  value: 2
 --- !u!1 &2125710790
 GameObject:
   m_ObjectHideFlags: 0

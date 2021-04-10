@@ -87,7 +87,7 @@ public class LinkedQuadtreeNode<TType> {
         if (depth == 0) {
             return this;
         }
-        var subIndex = Quadtree<TType>.GetIndexOfPosition(targetPosition, position);
+        var subIndex = LinkedQuadtree<TType>.GetIndexOfPosition(targetPosition, position);
         if (subnodes == null) {
             subnodes = new LinkedQuadtreeNode<TType>[4];
             for (int i = 0; i < subnodes.Length; i++) {
