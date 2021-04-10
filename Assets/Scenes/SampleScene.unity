@@ -213,11 +213,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1907557818}
+  - component: {fileID: 1907557823}
   - component: {fileID: 1907557820}
   - component: {fileID: 1907557819}
   - component: {fileID: 1907557817}
-  - component: {fileID: 1907557821}
   - component: {fileID: 1907557822}
+  - component: {fileID: 1907557821}
   m_Layer: 0
   m_Name: QuadtreeComponent
   m_TagString: Untagged
@@ -238,7 +239,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   size: 8
-  depth: 8
+  depth: 3
 --- !u!4 &1907557818
 Transform:
   m_ObjectHideFlags: 0
@@ -275,7 +276,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1907557816}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f891e5a18044c4e51a1157ed8f5f54e7, type: 3}
   m_Name: 
@@ -312,6 +313,21 @@ MonoBehaviour:
   quadtree: {fileID: 1907557817}
   radius: 0.5
   value: 2
+--- !u!114 &1907557823
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1907557816}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f467ec19c2a04ce988a83e6bc38d7a1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  generate: 1
+  quadtree: {fileID: 1907557817}
+  voxelMaterial: {fileID: 2100000, guid: de6b8474d9c774a28819c07734171aa7, type: 2}
 --- !u!1 &2125710790
 GameObject:
   m_ObjectHideFlags: 0
