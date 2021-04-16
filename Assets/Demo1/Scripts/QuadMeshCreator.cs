@@ -1,8 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class MarchingSquareMeshCreator : MonoBehaviour {
+public class QuadMeshCreator : MonoBehaviour
+{
     private readonly Color[] voxelColorCodes = new Color[] {
         Color.clear,
         Color.red,
@@ -45,9 +45,38 @@ public class MarchingSquareMeshCreator : MonoBehaviour {
         var normals = new List<Vector3>();
         var colors = new List<Color>();
 
-        foreach (var leaf in quadtree.Quadtree.GetLeafNodes()) {
+        foreach (var leaf in quadtree.Quadtree.LeafNodes) {
             if (leaf.Data == 0) continue;
-            NewMethod(leaf, vertices, triangles, uvs, normals, colors);
+            var upperLeft = new Vector3(leaf.Position.x - leaf.Size * 0.5f, leaf.Position.y + leaf.Size * 0.5f, 0);
+            var initialIndex = vertices.Count;
+
+            vertices.Add(upperLeft);
+            vertices.Add(upperLeft + Vector3.right * leaf.Size);
+            vertices.Add(upperLeft + Vector3.down * leaf.Size);
+            vertices.Add(upperLeft + Vector3.down * leaf.Size + Vector3.right * leaf.Size);
+
+            uvs.Add(upperLeft);
+            uvs.Add(upperLeft + Vector3.right * leaf.Size);
+            uvs.Add(upperLeft + Vector3.down * leaf.Size);
+            uvs.Add(upperLeft + Vector3.down * leaf.Size + Vector3.right * leaf.Size);
+
+            normals.Add(Vector3.back);
+            normals.Add(Vector3.back);
+            normals.Add(Vector3.back);
+            normals.Add(Vector3.back);
+
+            triangles.Add(initialIndex);
+            triangles.Add(initialIndex + 1);
+            triangles.Add(initialIndex + 2);
+
+            triangles.Add(initialIndex + 3);
+            triangles.Add(initialIndex + 2);
+            triangles.Add(initialIndex + 1);
+
+            colors.Add(voxelColorCodes[leaf.Data]);
+            colors.Add(voxelColorCodes[leaf.Data]);
+            colors.Add(voxelColorCodes[leaf.Data]);
+            colors.Add(voxelColorCodes[leaf.Data]);
         }
 
         mesh.SetVertices(vertices);
@@ -63,38 +92,5 @@ public class MarchingSquareMeshCreator : MonoBehaviour {
 
         meshFilter.mesh = mesh;
         return chunk;
-    }
-
-    private void NewMethod(QuadtreeNode<int> leaf, List<Vector3> vertices, List<int> triangles, List<Vector2> uvs, List<Vector3> normals, List<Color> colors) {
-        var upperLeft = new Vector3(leaf.Position.x - leaf.Size * 0.5f, leaf.Position.y + leaf.Size * 0.5f, 0);
-        var initialIndex = vertices.Count;
-
-        vertices.Add(upperLeft);
-        vertices.Add(upperLeft + Vector3.right * leaf.Size);
-        vertices.Add(upperLeft + Vector3.down * leaf.Size);
-        vertices.Add(upperLeft + Vector3.down * leaf.Size + Vector3.right * leaf.Size);
-
-        uvs.Add(upperLeft);
-        uvs.Add(upperLeft + Vector3.right * leaf.Size);
-        uvs.Add(upperLeft + Vector3.down * leaf.Size);
-        uvs.Add(upperLeft + Vector3.down * leaf.Size + Vector3.right * leaf.Size);
-
-        normals.Add(Vector3.back);
-        normals.Add(Vector3.back);
-        normals.Add(Vector3.back);
-        normals.Add(Vector3.back);
-
-        triangles.Add(initialIndex);
-        triangles.Add(initialIndex + 1);
-        triangles.Add(initialIndex + 2);
-
-        triangles.Add(initialIndex + 3);
-        triangles.Add(initialIndex + 2);
-        triangles.Add(initialIndex + 1);
-
-        colors.Add(voxelColorCodes[leaf.Data]);
-        colors.Add(voxelColorCodes[leaf.Data]);
-        colors.Add(voxelColorCodes[leaf.Data]);
-        colors.Add(voxelColorCodes[leaf.Data]);
     }
 }

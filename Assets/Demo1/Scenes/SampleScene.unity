@@ -311,7 +311,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   quadtree: {fileID: 1907557817}
-  radius: 0.5
+  radius: 0.25
   value: 2
 --- !u!114 &1907557823
 MonoBehaviour:
